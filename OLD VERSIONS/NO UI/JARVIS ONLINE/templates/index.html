@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JARVIS AI Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #101820;
+      color: #ffffff;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 28px;
+      color: #00ffc8;
+      margin-bottom: 10px;
+    }
+
+    #date, #time, #battery {
+      font-size: 16px;
+      margin: 4px;
+    }
+
+    #chat {
+      width: 90%;
+      height: 300px;
+      margin: 10px auto;
+      padding: 10px;
+      border: 1px solid #444;
+      background: #1a1a1a;
+      overflow-y: scroll;
+      text-align: left;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+
+    #userInput {
+      width: 80%;
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 10px 15px;
+      margin: 10px 5px;
+      font-size: 16px;
+      background-color: #00ffc8;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #00c9a7;
+    }
+  </style>
+  <script>
+  let voicesReady = false;
+
+  function initVoices() {
+    // Load voices (required for mobile)
+    return new Promise((resolve) => {
+      let voices = window.speechSynthesis.getVoices();
+      if (voices.length !== 0) {
+        voicesReady = true;
+        resolve(voices);
+      } else {
+        window.speechSynthesis.onvoiceschanged = () => {
+          voices = window.speechSynthesis.getVoices();
+          voicesReady = true;
+          resolve(voices);
+        };
+      }
+    });
+  }
+
+  async function speak(text) {
+    if (!'speechSynthesis' in window) {
+      alert("❌ Speech not supported on this browser.");
+      return;
+    }
+
+    const voices = await initVoices();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'en-US';
+    utter.rate = 1;
+    utter.pitch = 1;
+
+    // Choose a mobile-friendly voice
+    const mobileVoice = voices.find(v =>
+      v.name.includes("Google") || v.name.includes("English")
+    );
+    if (mobileVoice) utter.voice = mobileVoice;
+
+    window.speechSynthesis.cancel(); // Stop existing speech
+    window.speechSynthesis.speak(utter);
+  }
+
+  async function askJarvis() {
+    const userInput = document.getElementById("userInput");
+    const chat = document.getElementById("chat");
+    const message = userInput.value.trim();
+    if (!message) return;
+
+    chat.innerHTML += "🧑: " + message + "\n";
+    userInput.value = "";
+
+    const response = await fetch('/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message })
+    });
+
+    const data = await response.json();
+    const reply = data.reply;
+
+    chat.innerHTML += "🤖 JARVIS: " + reply + "\n\n";
+    chat.scrollTop = chat.scrollHeight;
+
+    speak(reply); // 📱 Speak on phone
+  }
+
+  async function updateStatus() {
+    const res = await fetch('/status');
+    const data = await res.json();
+    document.getElementById("time").innerText = "🕒 " + data.time;
+    document.getElementById("date").innerText = "📅 " + data.date;
+    document.getElementById("battery").innerText = "🔋 " + data.battery;
+  }
+
+  setInterval(updateStatus, 5000);
+  window.onload = () => {
+    updateStatus();
+    initVoices(); // Load voices on page load
+  };
+</script>
+
+
+</head>
+<body>
+  <h1>JARVIS AI Assistant</h1>
+  <div id="date">📅 Loading date...</div>
+  <div id="time">🕒 Loading time...</div>
+  <div id="battery">🔋 Loading battery...</div>
+
+  <div id="chat">Welcome to JARVIS. Ask anything below.</div>
+
+  <input type="text" id="userInput" placeholder="Ask JARVIS...">
+  <br>
+  <button onclick="askJarvis()">Send</button>
+
+  <script>
+    async function askJarvis() {
+      const userInput = document.getElementById("userInput");
+      const chat = document.getElementById("chat");
+      const message = userInput.value.trim();
+      if (!message) return;
+
+      chat.innerHTML += "🧑: " + message + "\n";
+      userInput.value = "";
+
+      const response = await fetch('/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await response.json();
+      chat.innerHTML += "🤖 JARVIS: " + data.reply + "\n\n";
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    async function updateStatus() {
+      const res = await fetch('/status');
+      const data = await res.json();
+      document.getElementById("time").innerText = "🕒 " + data.time;
+      document.getElementById("date").innerText = "📅 " + data.date;
+      document.getElementById("battery").innerText = "🔋 " + data.battery;
+    }
+
+    setInterval(updateStatus, 5000);
+    window.onload = updateStatus;
+  </script>
+</body>
+</html>

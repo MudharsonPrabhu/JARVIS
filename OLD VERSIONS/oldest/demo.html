@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Guess the number</title>
+  <style>
+    .num{
+      color: green;
+    }
+    body{
+      background-color: beige;
+    }
+    button{
+      color: white;
+      background-color: red;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    button:active{
+      background-color: blue;
+      padding: 7px;
+    }
+    input{
+      padding: 10px;
+      background-color: azure;
+      border-radius: 10px;
+
+    }
+  </style>
+</head>
+<body>
+<h1 class="num">Guess the number from 1 to 10</h1>
+<input id="ip" type="number" placeholder="guess a number"> 
+<button onclick="guess()">Check</button>
+<h2 id="para"></p>
+<h2 id="score1"></p>
+</body>
+<script>
+  var score =0
+  function guess(){
+  var numb=Math.floor(Math.random() * 10) + 1;
+  
+  if(Number(document.getElementById("ip").value)==numb){
+    document.getElementById("para").textContent="You guessed correct"
+    score++;
+  }
+  else{
+    document.getElementById("para").textContent="you are wrong"
+    score--;
+  }
+  document.getElementById("score1").textContent= "Score:" + Number(score);
+}
+</script>
+</html>

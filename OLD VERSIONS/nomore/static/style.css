@@ -1,0 +1,197 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Orbitron', sans-serif;
+  color: #00ff88;
+}
+
+.bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -1;
+  pointer-events: none;
+}
+.audio-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background: radial-gradient(circle at center, #00ff88 0%, #006633 70%);
+  color: #000;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  box-shadow: 0 0 15px #00ff88cc, 0 0 30px #00ff8844 inset;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  z-index: 10;
+}
+
+.audio-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 25px #00ff88cc, 0 0 50px #00ff8844 inset;
+}
+
+
+
+.hud-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  height: 100%;
+  padding: 2rem;
+}
+
+.display-box {
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 2px solid #00ff88;
+  color: #00ffee;
+  font-family: 'Orbitron', sans-serif;
+  backdrop-filter: blur(6px);
+  font-size: 16px;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 20px;
+  max-height: 200px; /* Limit height */
+  overflow-y: auto;   /* Enable vertical scroll */
+  white-space: pre-wrap;
+}
+
+
+.display-box p {
+  margin: 0;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: #bbffdd;
+  text-shadow: 0 0 10px #00ff88;
+}
+/* Applies to any scrollable area */
+.display-box::-webkit-scrollbar {
+  width: 8px;
+}
+
+.display-box::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2); /* Scrollbar track color */
+}
+
+.display-box::-webkit-scrollbar-thumb {
+  background-color: #00ffee;     /* Scroll thumb color */
+  border-radius: 4px;
+  border: 1px solid rgba(0, 255, 238, 0.5); /* Optional neon border */
+}
+
+/* Optional: Add hover effect */
+.display-box::-webkit-scrollbar-thumb:hover {
+  background-color: #00cccc;
+}
+
+
+.mic-button {
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle at center, #00ff88 0%, #006633 70%);
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 0 15px #00ff88cc, 0 0 40px #00ff8844 inset;
+  animation: pulse 2s infinite;
+  cursor: pointer;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 5px #00ff88cc, 0 0 20px #00ff8844 inset; }
+  50% { box-shadow: 0 0 25px #00ff88cc, 0 0 60px #00ff8844 inset; }
+  100% { box-shadow: 0 0 5px #00ff88cc, 0 0 20px #00ff8844 inset; }
+}
+
+.log-area {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
+  font-size: 0.9rem;
+  color: #00ffcc;
+  background: rgba(0, 255, 128, 0.05);
+  border: 1px solid #00ff8844;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 0 20px #00ff8844;
+  backdrop-filter: blur(6px);
+  z-index: 5;
+  scrollbar-width: thin;
+  scrollbar-color: #00ff77 transparent;
+}
+
+.log-entry {
+  margin-bottom: 0.5rem;
+  padding-left: 0.5rem;
+  border-left: 3px solid #00ff99;
+  text-shadow: 0 0 6px #00ff99;
+  transition: all 0.2s ease-in-out;
+}
+
+.log-entry.user {
+  color: #66ff99;
+  border-left-color: #66ff99;
+  text-shadow: 0 0 6px #66ff99;
+}
+
+.log-entry.jarvis {
+  color: #00ffcc;
+  border-left-color: #00ffcc;
+  text-shadow: 0 0 6px #00ffcc;
+}
+
+.log-entry.error {
+  color: #ff6666;
+  border-left-color: #ff6666;
+  text-shadow: 0 0 6px #ff6666;
+}
+
+.log-entry.info {
+  color: #99ffaa;
+  border-left-color: #99ffaa;
+  text-shadow: 0 0 6px #99ffaa;
+}
+
+.log-time {
+  font-size: 0.8rem;
+  color: #ccffee;
+  margin-right: 6px;
+}
+.title-bar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 2rem;
+  padding: 1rem 0;
+  color: #00ffcc;
+  background: rgba(0, 255, 128, 0.05);
+  border-bottom: 2px solid #00ff88;
+  box-shadow: 0 0 10px #00ff88aa;
+  z-index: 10;
+  text-shadow: 0 0 10px #00ff88;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.signature-bar {
+  position: fixed;
+  top: 6px;
+  right: 180px;
+  font-size: 1rem;
+  color: #66ffcc;
+  font-family: 'Orbitron', sans-serif;
+  z-index: 11;
+  text-shadow: 0 0 5px #00ffaa;
+  opacity: 0.8;
+}

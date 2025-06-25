@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JARVIS AI Interface</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="title-bar">JARVIS VIRTUAL ASSISTANT</div>
+  <div class="signature-bar">MADE BY SMP</div>
+
+
+  <video class="bg-video" autoplay muted loop playsinline>
+  <source src="{{ url_for('static', filename='assets/bg.mp4') }}" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+<audio id="bg-audio" autoplay loop muted>
+  <source src="{{ url_for('static', filename='assets/bga.mp3') }}" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
+
+
+<button class="audio-toggle" onclick="toggleAudio()">🔈</button>
+
+
+  <div class="log-area" style="height: 200px; overflow-y: auto; background-color: rgba(0,0,0,0.4); color: #00ffee; font-family: monospace; font-size: 14px; padding: 10px; border-radius: 10px; margin-top: 20px;">
+    <div id="logs"></div>
+  </div>h
+
+  <div class="hud-container">
+  <div class="display-box">
+    <p id="response-text">Awaiting your command...</p>
+  </div>
+
+  <button class="mic-button" onclick="toggleMic()">
+    <img src="{{ url_for('static', filename='assets/mic-icon.png') }}" alt="Mic" class="mic-icon">
+  </button>
+</div>
+
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+
+</body>
+</html>
