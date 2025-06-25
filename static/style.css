@@ -19,7 +19,7 @@ html, body {
 }
 .audio-toggle {
   position: fixed;
-  top: 1rem;
+  top: 5px;
   right: 1rem;
   background: radial-gradient(circle at center, #00ff88 0%, #006633 70%);
   color: #000;
@@ -106,19 +106,25 @@ html, body {
   cursor: pointer;
 }
 
-@keyframes pulse {
-  0% { box-shadow: 0 0 5px #00ff88cc, 0 0 20px #00ff8844 inset; }
-  50% { box-shadow: 0 0 25px #00ff88cc, 0 0 60px #00ff8844 inset; }
-  100% { box-shadow: 0 0 5px #00ff88cc, 0 0 20px #00ff8844 inset; }
+@keyframes pulse-red {
+  0% { box-shadow: 0 0 5px #ff4444cc, 0 0 20px #66000088 inset; }
+  50% { box-shadow: 0 0 25px #ff4444cc, 0 0 60px #66000088 inset; }
+  100% { box-shadow: 0 0 5px #ff4444cc, 0 0 20px #66000088 inset; }
 }
+
+body.coding-mode .mic-button,
+body.coding-mode #cancelBtn {
+  animation: pulse-red 2s infinite;
+}
+
 
 .log-area {
   position: fixed;
   top: 1rem;
   left: 1rem;
   width: 400px;
-  max-height: 90vh;
-  overflow-y: auto;
+  height: 200px; /* fixed height */
+  overflow-y: auto; /* enable scrolling */
   font-size: 0.9rem;
   color: #f1ffc8;
   background: rgba(0, 255, 128, 0.05);
@@ -131,6 +137,30 @@ html, body {
   scrollbar-width: thin;
   scrollbar-color: #00ff77 transparent;
 }
+
+.log-area::-webkit-scrollbar {
+  width: 8px;
+}
+
+.log-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.log-area::-webkit-scrollbar-thumb {
+  background-color: #00ff77;
+  border-radius: 4px;
+}
+
+.log-area::-webkit-scrollbar-thumb:hover {
+  background-color: #00cc66;
+}
+
+
+#logs {
+  display: flex;
+  flex-direction: column;
+}
+
 
 .log-entry {
   margin-bottom: 0.5rem;
@@ -172,18 +202,28 @@ html, body {
   font-size: 2rem;
   padding: 1rem 0;
   color: #00ffcc;
-  background: rgba(0, 255, 128, 0.05);
-  border-bottom: 2px solid #00ff88;
-  box-shadow: 0 0 10px #00ff88aa;
+
+  border-bottom: none !important;
+  box-shadow: none !important; /* 🔥 remove glow causing fake line */
   z-index: 10;
   text-shadow: 0 0 10px #00ff88;
   font-family: 'Orbitron', sans-serif;
 }
 
+
+body.coding-mode .title-bar {
+  border-bottom: none; /* ✅ Also keep clean in coding mode */
+  color: #ffaaaa;
+  
+  text-shadow: 0 0 10px #ff4444;
+  box-shadow: 0 0 10px #ff4444;
+}
+
+
 .signature-bar {
   position: fixed;
-  top: 6px;
-  right: 180px;
+  top: 0px;
+  left: 5px;
   font-size: 1rem;
   color: #66ffcc;
   font-family: 'Orbitron', sans-serif;
@@ -336,4 +376,145 @@ html, body {
 #cancelBtn:disabled {
   opacity: 0.4;
 }
+}
+/* We'll apply this in your CSS */
+.mode-toggle-btn {
+  position: fixed;
+  top: 16px;
+  left: 79%;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, #00ff88 0%, #006633 75%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  z-index: 10;
+    box-shadow: 0 0 15px #00ff88cc, 0 0 25px #00ff8844 inset;
+  font-family: 'Orbitron', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mode-toggle-btn:hover {
+  background: radial-gradient(circle, #ff0000 0%, #330000 70%);
+  box-shadow: 0 0 25px #ff0000cc, 0 0 40px #66000099 inset;
+}
+
+
+body.coding-mode .mode-toggle-btn {
+  background: radial-gradient(circle, #ff4444 0%, #660000 70%);
+  color: white;
+  box-shadow: 0 0 15px #ff4444cc, 0 0 25px #66000099 inset;
+}
+
+body.coding-mode .mode-toggle-btn:hover {
+  background: radial-gradient(circle, #00ff88 0%, #006633 75%);
+  box-shadow: 0 0 25px #00ff88cc, 0 0 40px #00ff8844 inset;
+}
+
+
+body.coding-mode .display-box {
+  border-color: #ff4444;
+  box-shadow: 0 0 15px #ff4444;
+  color: #ffaaaa;
+}
+
+body.coding-mode .display-box p {
+  color: #ffcccc;
+  text-shadow: 0 0 10px #ff4444;
+}
+
+body.coding-mode .log-area {
+  border-color: #ff4444;
+  box-shadow: 0 0 20px #ff4444;
+}
+
+body.coding-mode .log-entry {
+  border-left-color: #ff4444;
+  text-shadow: 0 0 6px #ff4444;
+  color: #ffaaaa;
+}
+
+body.coding-mode .log-entry.error {
+  color: #ff7777;
+  border-left-color: #ff7777;
+}
+
+body.coding-mode .log-entry.info {
+  color: #ff9999;
+  border-left-color: #ff9999;
+}
+
+body.coding-mode .title-bar {
+  border-bottom-color: #ff4444;
+  box-shadow: 0 0 10px #ff4444;
+  color: #ffaaaa;
+  text-shadow: 0 0 10px #ff4444;
+}
+
+body.coding-mode .system-info {
+  border-color: #ff4444;
+  box-shadow: 0 0 10px #ff4444;
+  color: #ffcccc;
+}
+
+body.coding-mode .system-info div {
+  text-shadow: 0 0 6px #ff4444;
+}
+
+body.coding-mode #cancelBtn {
+  background: radial-gradient(#ffcccc 0%, #660000 70%);
+  box-shadow: 0 4px 10px rgba(255,0,0,0.4);
+}
+
+body.coding-mode .mic-button {
+  background: radial-gradient(circle at center, #ffcccc 0%, #660000 70%);
+  box-shadow: 0 0 15px #ffcccc, 0 0 40px #ff4444 inset;
+}
+
+body.coding-mode .mic-button:hover {
+  box-shadow: 0 0 25px #ffcccc, 0 0 60px #ff4444 inset;
+}
+body.coding-mode .log-area::-webkit-scrollbar-thumb {
+  background-color: #ff4444;
+}
+
+body.coding-mode .log-area::-webkit-scrollbar-thumb:hover {
+  background-color: #cc0000;
+}
+
+body.coding-mode .log-area {
+  scrollbar-color: #ff4444 transparent;
+}
+body.coding-mode .signature-bar {
+  color: #ff9999;
+  text-shadow: 0 0 6px #ff4444;
+}
+body.coding-mode .audio-toggle {
+  background: radial-gradient(circle at center, #ff9999 0%, #660000 70%);
+  box-shadow: 0 0 15px #ff4444cc, 0 0 30px #66000099 inset;
+  color: white;
+}
+body.coding-mode #textInput {
+  border: 1px solid #ff4444;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #ffaaaa;
+  box-shadow: 0 0 12px #ff4444aa;
+}
+body.coding-mode #textInput::placeholder {
+  color: #ff8888;
+}
+body.coding-mode .mic-button {
+  background: radial-gradient(circle at center, #ffcccc 0%, #660000 70%);
+  box-shadow: 0 0 15px #ffcccc, 0 0 40px #ff4444 inset;
+}
+
+body.coding-mode .mic-button:hover {
+  box-shadow: 0 0 25px #ffcccc, 0 0 60px #ff4444 inset;
+}
+body.coding-mode #cancelBtn {
+  background: radial-gradient(circle at center, #ffcccc 0%, #660000 70%);
+  box-shadow: 0 0 20px #ff4444cc, 0 0 40px #66000099 inset;
+  color: white;
 }

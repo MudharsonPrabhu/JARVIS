@@ -8,55 +8,71 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+
+  <!-- Title and Signature -->
   <div class="title-bar">JARVIS VIRTUAL ASSISTANT</div>
   <div class="signature-bar">MADE BY SMP</div>
 
-
-  <video class="bg-video" autoplay muted loop playsinline>
+  <!-- Background Video -->
+  <!-- Background Video for Conversation Mode -->
+<video id="bg-video-convo" class="bg-video" autoplay muted loop playsinline>
   <source src="{{ url_for('static', filename='assets/bg.mp4') }}" type="video/mp4">
   Your browser does not support the video tag.
 </video>
-<audio id="bg-audio" autoplay loop muted>
-  <source src="{{ url_for('static', filename='assets/bga.mp3') }}" type="audio/mpeg">
-  Your browser does not support the audio element.
-</audio>
 
+<!-- Background Video for Coding Mode -->
+<video id="bg-video-coding" class="bg-video" autoplay muted loop playsinline style="display: none;">
+  <source src="{{ url_for('static', filename='assets/redbg.mp4') }}" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
+  <!-- Background Audio -->
+  <audio id="bg-audio" autoplay loop muted>
+    <source src="{{ url_for('static', filename='assets/bga.mp3') }}" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
 
-<button class="audio-toggle" onclick="toggleAudio()">🔈</button>
+  <!-- Mode Toggle Button -->
+  <button class="mode-toggle-btn" id="mode-toggle-btn" onclick="toggleMode()">Switch to Coding Mode</button>
 
+  <!-- Audio Toggle -->
+  <button class="audio-toggle" onclick="toggleAudio()">🔈</button>
 
-  <div class="log-area" style="height: 200px; overflow-y: auto; background-color: rgba(0,0,0,0.4); color: #00ffee; font-family: monospace; font-size: 14px; padding: 10px; border-radius: 10px; margin-top: 20px;">
+  <!-- Log Area -->
+  <div class="log-area">
     <div id="logs"></div>
-  </div>h
-
-  <div class="hud-container">
-  <div class="display-box">
-    <p id="response-text">Awaiting your command...</p>
   </div>
-<div class="system-info">
-  <div id="time">--:--</div>
-  <div id="date">--/--/----</div>
-  <div id="battery">🔋 Battery: --%</div>
-</div>
 
- <!-- Text input on bottom-left -->
-<div class="text-input-container">
-  <input id="textInput" type="text" placeholder="Type your command..." onkeydown="handleTextInput(event)">
-</div>
-
-<!-- Mic button (already in hud, we'll reposition) -->
-<div class="mic-button-container">
-  <button class="mic-button" onclick="toggleMic()">
-    <!--<img src="{{ url_for('static', filename='assets/mic-icon.png') }}" alt="Mic" class="mic-icon">-->
-  </button>
-    <button id="cancelBtn">Cancel</button>
+  <!-- HUD Content -->
+  <div class="hud-container">
     
-</div>
+    <!-- Display Output -->
+    <div class="display-box">
+      <p id="response-text">Awaiting your command...</p>
+    </div>
 
+    <!-- System Info -->
+    <div class="system-info">
+      <div id="time">--:--</div>
+      <div id="date">--/--/----</div>
+      <div id="battery">🔋 Battery: --%</div>
+    </div>
 
+  </div>
+
+  <!-- Text Input (bottom-left) -->
+  <div class="text-input-container">
+    <input id="textInput" type="text" placeholder="Type your command..." onkeydown="handleTextInput(event)">
+  </div>
+
+  <!-- Mic and Cancel Buttons (bottom-right) -->
+  <div class="mic-button-container">
+    <button class="mic-button" onclick="toggleMic()"></button>
+    <button id="cancelBtn">Cancel</button>
+  </div>
+
+  <!-- Script -->
   <script src="{{ url_for('static', filename='script.js') }}"></script>
-
 
 </body>
 </html>

@@ -1,9 +1,12 @@
-const API_BASE_URL = "https://printers-generic-cooler-arch.trycloudflare.com/";
+const API_BASE_URL = "http://192.168.222.185:5000";
 
 let isListening = false;
 let recognition = null;
 let currentUtterance = null;
 let controller;
+let currentMode = "conversation"; // default mode
+window.speechOutputEnabled = true;
+
 
 function addLog(message, type = "info") {
   const logContainer = document.getElementById("logs");
@@ -49,31 +52,46 @@ function toggleMic() {
   };
 
   recognition.onresult = async (event) => {
-    const text = event.results[0][0].transcript;
-    document.getElementById("response-text").textContent = `You said: ${text}`;
-    addLog(text, "user");
+  const text = event.results[0][0].transcript;
+  document.getElementById("response-text").textContent = `You said: ${text}`;
 
-    try {
-      const res = await fetch(`${API_BASE_URL}/process`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text })
-      });
+  // --- Mode switching via voice commands ---
+ if (text.toLowerCase().includes("switch to coding mode") || text.toLowerCase().includes("coding mode")) {
+  if (currentMode !== "coding") toggleMode();
+  return;
+}
+if (text.toLowerCase().includes("switch to conversation mode") || text.toLowerCase().includes("conversation mode")) {
+  if (currentMode !== "conversation") toggleMode();
+  return;
+}
 
-      const data = await res.json();
-      document.getElementById("response-text").textContent = data.reply;
-      addLog(data.reply, "jarvis");
 
+  addLog(text, "user");
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/process`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text })
+    });
+
+    const data = await res.json();
+    document.getElementById("response-text").textContent = data.reply;
+    addLog(data.reply, "jarvis");
+
+    // 🔊 Speak only if enabled for this mode
+    if (window.speechOutputEnabled) {
       currentUtterance = new SpeechSynthesisUtterance(data.reply);
       currentUtterance.pitch = 1.2;
       currentUtterance.rate = 1.0;
-      synth.speak(currentUtterance);
-    } catch (error) {
-      const errMsg = `Server error: ${error.message}`;
-      document.getElementById("response-text").textContent = errMsg;
-      addLog(errMsg, "error");
+      window.speechSynthesis.speak(currentUtterance);
     }
-  };
+  } catch (error) {
+    const errMsg = `Server error: ${error.message}`;
+    document.getElementById("response-text").textContent = errMsg;
+    addLog(errMsg, "error");
+  }
+};
 
   recognition.onerror = (event) => {
     const errMsg = `Recognition error: ${event.error}`;
@@ -110,10 +128,14 @@ document.getElementById("textInput").addEventListener("keydown", async (e) => {
       document.getElementById("response-text").textContent = data.reply;
       addLog(data.reply, "jarvis");
 
-      const utter = new SpeechSynthesisUtterance(data.reply);
-      utter.pitch = 1.2;
-      utter.rate = 1.0;
-      window.speechSynthesis.speak(utter);
+      // ✅ Speak only if enabled
+      if (window.speechOutputEnabled) {
+        const utter = new SpeechSynthesisUtterance(data.reply);
+        utter.pitch = 1.2;
+        utter.rate = 1.0;
+        window.speechSynthesis.speak(utter);
+      }
+
     } catch (err) {
       const errMsg = "Failed to process command";
       document.getElementById("response-text").textContent = errMsg;
@@ -121,6 +143,7 @@ document.getElementById("textInput").addEventListener("keydown", async (e) => {
     }
   }
 });
+
 
 function stopJarvis() {
   console.log("STOP clicked");
@@ -173,5 +196,72 @@ document.addEventListener('keydown', function(event) {
 
 
 
+function initializeMode() {
+  document.body.classList.add("conversation-mode");
+  const toggleBtn = document.getElementById("mode-toggle-btn");
+  if (toggleBtn) toggleBtn.textContent = "Switch to Coding Mode";
+}
 
+function toggleMode() {
+  const isCoding = currentMode === "coding";
+  currentMode = isCoding ? "conversation" : "coding";
 
+  document.body.classList.toggle("coding-mode", !isCoding);
+  document.body.classList.toggle("conversation-mode", isCoding);
+
+  const toggleBtn = document.getElementById("mode-toggle-btn");
+  if (toggleBtn) {
+    toggleBtn.textContent = isCoding
+      ? "Switch to Coding Mode"
+      : "Switch to Conversation Mode";
+  }
+
+  const convoVideo = document.getElementById("bg-video-convo");
+  const codingVideo = document.getElementById("bg-video-coding");
+
+  if (currentMode === "coding") {
+    convoVideo.pause();
+    convoVideo.style.display = "none";
+    convoVideo.style.visibility = "hidden";
+
+    codingVideo.style.display = "block";
+    codingVideo.style.visibility = "visible";
+
+    codingVideo.load(); // optional
+    codingVideo.play().catch((e) => {
+      console.error("⚠️ Coding video play failed:", e);
+      addLog("❌ Coding video failed to play", "error");
+    });
+  } else {
+    codingVideo.pause();
+    codingVideo.style.display = "none";
+    codingVideo.style.visibility = "hidden";
+
+    convoVideo.style.display = "block";
+    convoVideo.style.visibility = "visible";
+
+    convoVideo.play().catch((e) => {
+      console.error("⚠️ Conversation video play failed:", e);
+      addLog("❌ Conversation video failed to play", "error");
+    });
+  }
+
+  fetch("/switch-model", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mode: currentMode }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log("Model Switch:", data.status || data.error);
+      addLog(`🧠 ${data.status || "Model switch failed"}`, "info");
+    })
+    .catch((err) => {
+      console.error("Error switching model:", err);
+      addLog("❌ Failed to switch model", "error");
+    });
+
+  addLog(`🔀 Switched to ${currentMode} mode`, "info");
+}
+
+window.addEventListener("DOMContentLoaded", initializeMode);
